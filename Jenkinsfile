@@ -7,7 +7,7 @@
         DOCKERHUB_FRONTEND = "manishapattar/mean-frontend"
 
         // App EC2 (Docker + Nginx server)
-        SSH_HOST = "44.200.190.21"
+        SSH_HOST = "98.92.247.48"
         SSH_USER = "ubuntu"
     }
 

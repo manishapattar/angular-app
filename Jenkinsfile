@@ -18,13 +18,13 @@ pipeline {
 
         stage('Build Backend Image') {
             steps {
-                sh "docker build -t ${DOCKERHUB_BACKEND}:latest ./backend"
+                sh 'docker build -t ${DOCKERHUB_BACKEND}:latest ./backend'
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                sh "docker build -t ${DOCKERHUB_FRONTEND}:latest ./frontend"
+                sh 'docker build -t ${DOCKERHUB_FRONTEND}:latest ./frontend'
             }
         }
 
@@ -33,27 +33,26 @@ pipeline {
                 DOCKERHUB = credentials('dockerhub-cred')
             }
             steps {
-                sh """
-                  echo "\$DOCKERHUB_PSW" | docker login -u "\$DOCKERHUB_USR" --password-stdin
+                sh '''
+                  echo "$DOCKERHUB_PSW" | docker login -u "$DOCKERHUB_USR" --password-stdin
                   docker push ${DOCKERHUB_BACKEND}:latest
                   docker push ${DOCKERHUB_FRONTEND}:latest
-                """
+                '''
             }
         }
 
         stage('Deploy to App Server') {
             steps {
                 sshagent(credentials: ['app-ec2-ssh']) {
-                    sh """
-                      ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} '
-                        cd /opt/mean-app &&
+                    sh '''
+                      ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+                        cd /opt/mean-app/angular-app &&
                         sudo docker compose pull &&
                         sudo docker compose up -d
-                      '
-                    """
+                      "
+                    '''
                 }
             }
         }
     }
 }
-

@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // Docker Hub repos
         DOCKERHUB_BACKEND  = "manishapattar/mean-backend"
         DOCKERHUB_FRONTEND = "manishapattar/mean-frontend"
 
-        // App EC2 (Docker + Nginx server)
         SSH_HOST = "98.92.247.48"
         SSH_USER = "ubuntu"
     }
@@ -20,17 +18,13 @@ pipeline {
 
         stage('Build Backend Image') {
             steps {
-                sh """
-                  docker build -t ${DOCKERHUB_BACKEND}:latest ./backend
-                """
+                sh "docker build -t ${DOCKERHUB_BACKEND}:latest ./backend"
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                sh """
-                  docker build -t ${DOCKERHUB_FRONTEND}:latest ./frontend
-                """
+                sh "docker build -t ${DOCKERHUB_FRONTEND}:latest ./frontend"
             }
         }
 
@@ -41,7 +35,6 @@ pipeline {
             steps {
                 sh """
                   echo "\$DOCKERHUB_PSW" | docker login -u "\$DOCKERHUB_USR" --password-stdin
-
                   docker push ${DOCKERHUB_BACKEND}:latest
                   docker push ${DOCKERHUB_FRONTEND}:latest
                 """
@@ -53,9 +46,9 @@ pipeline {
                 sshagent(credentials: ['app-ec2-ssh']) {
                     sh """
                       ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} '
-                        cd /opt/mean-app/ &&
-                        sudo docker-compose pull &&
-                        sudo docker-compose up -d
+                        cd /opt/mean-app &&
+                        sudo docker compose pull &&
+                        sudo docker compose up -d
                       '
                     """
                 }
@@ -63,3 +56,4 @@ pipeline {
         }
     }
 }
+

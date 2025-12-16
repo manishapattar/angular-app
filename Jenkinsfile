@@ -21,7 +21,7 @@
         stage('Build Backend Image') {
             steps {
                 sh """
-                  docker build -t ${DOCKERHUB_BACKEND}:latest ./angular-app/backend
+                  docker build -t ${DOCKERHUB_BACKEND}:latest ./backend
                 """
             }
         }
@@ -29,7 +29,7 @@
         stage('Build Frontend Image') {
             steps {
                 sh """
-                  docker build -t ${DOCKERHUB_FRONTEND}:latest ./angular-mean-app/frontend
+                  docker build -t ${DOCKERHUB_FRONTEND}:latest ./frontend
                 """
             }
         }
@@ -53,7 +53,7 @@
                 sshagent(credentials: ['app-ec2-ssh']) {
                     sh """
                       ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} '
-                        cd /opt/mean-app/angular-app &&
+                        cd /opt/mean-app/ &&
                         git pull &&
                         sudo docker-compose pull &&
                         sudo docker-compose up -d

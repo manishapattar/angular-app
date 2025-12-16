@@ -1,4 +1,4 @@
-    pipeline {
+pipeline {
     agent any
 
     environment {
@@ -54,7 +54,6 @@
                     sh """
                       ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} '
                         cd /opt/mean-app/ &&
-                        git pull &&
                         sudo docker-compose pull &&
                         sudo docker-compose up -d
                       '
